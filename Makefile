@@ -10,7 +10,14 @@ all: tutorial.pp.html
 	  $< > $@
 
 pippo.byte: pippo.ml
-	ocamlfind ocamlc -g -package compiler-libs.toplevel -annot -linkpkg pippo.ml -o pippo.byte
+	# This is pretty much what ocamlmktop does, except we don't load
+	# topstart.cmo, otherwise it turns pippo into an ocaml interpreter.
+	ocamlc \
+	  -verbose \
+	  -g -annot \
+	  -I +compiler-libs \
+	  -linkall ocamlcommon.cma ocamlbytecomp.cma ocamltoplevel.cma str.cma \
+	  pippo.ml -o pippo.byte
 
 clean:
 	rm -f *.pp.markdown *.cmo *.cmi *.annot *.byte

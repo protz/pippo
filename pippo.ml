@@ -20,6 +20,7 @@
 
 (** Initialize the top-level loop. *)
 let init () =
+  (* Toploop.set_paths (); *)
   Toploop.initialize_toplevel_env ();
   Toploop.input_name := "//toplevel//";
   Topdirs.dir_directory (Sys.getenv "OCAML_TOPLEVEL_PATH");
@@ -30,10 +31,10 @@ let init () =
 let send_phrase (phrase: string): unit =
   (* Report an error message in a readable format. *)
   let error f =
-    Format.pp_print_string Format.err_formatter "Error parsing the following phrase:\n";
-    Format.pp_print_string Format.err_formatter phrase;
-    Format.pp_print_newline Format.err_formatter ();
     f ();
+    Format.pp_print_newline Format.err_formatter ();
+    Format.pp_print_string Format.err_formatter "The offending phrase is:\n";
+    Format.pp_print_string Format.err_formatter phrase;
     Format.pp_print_newline Format.err_formatter ();
     exit 1
   in
@@ -43,14 +44,15 @@ let send_phrase (phrase: string): unit =
     let p = !Toploop.parse_toplevel_phrase (Lexing.from_string phrase) in
 
     (* Send it to the top-level. May raise Typecore.error. *)
-    let res = Toploop.execute_phrase false Format.std_formatter p in
-    if res then
-      ()
-    else
-      failwith "Error sending phrase to the toplevel"
+    ignore (Toploop.execute_phrase false Format.err_formatter p);
   with
-  | Typecore.Error (_loc, env, e) ->
-      (* Print any error message. *)
+  | Symtable.Error e ->
+      error (fun () -> Symtable.report_error Format.err_formatter e);
+  | Typetexp.Error (loc, env, e) ->
+      Location.print_error Format.err_formatter loc;
+      error (fun () -> Typetexp.report_error env Format.err_formatter e);
+  | Typecore.Error (loc, env, e) ->
+      Location.print_error Format.err_formatter loc;
       error (fun () -> Typecore.report_error env Format.err_formatter e);
   | Syntaxerr.Error e ->
       error (fun () -> Syntaxerr.report_error Format.err_formatter e);
@@ -85,12 +87,30 @@ let inject_value (name: string) (typ: string) (value: 'a): unit =
   Toploop.toplevel_env :=
     Env.add_value (Ident.create name) vd !Toploop.toplevel_env;
 
+  (* Disable the "this function application is partial" warning, since that's
+   * what our little trick with weak variables + ignore () above uses. *)
+  Warnings.parse_options false "-5";
   (* Instantiate the weak type variable. *)
   send_phrase (Printf.sprintf "ignore (%s: %s);;" name typ);
+  (* Re in-state the warning. *)
+  Warnings.parse_options false "+5";
 ;;
 
 
 type state = Text | OCaml
+
+
+let split haystack needle =
+  let r = Str.regexp needle in
+  Str.split r haystack
+;;
+
+
+let send_phrase_if phrase =
+  let phrase = String.trim phrase in
+  if String.length phrase > 0 then
+    send_phrase (phrase ^ "\n;;")
+;;
 
 
 (** Loop over the lines of a file. Enters OCaml code sections when faced with {%
@@ -104,10 +124,10 @@ let iter_lines (ic: in_channel): unit =
     | "{%", Text ->
         state := OCaml
     | "%}", OCaml ->
-        Buffer.add_char buf '\n';
-        Buffer.add_string buf ";;";
-        send_phrase (Buffer.contents buf);
+        let contents = Buffer.contents buf in
         Buffer.clear buf;
+        let phrases = split contents ";;" in
+        List.iter send_phrase_if phrases;
         state := Text
     | _, Text ->
         print_endline line
@@ -126,9 +146,6 @@ let _ =
   
   (* Global initialization. *)
   init ();
-  (* Disable the "this function application is partial" warning, since that's
-   * what our little trick with weak variables + ignore () above uses. *)
-  Warnings.parse_options false "-5";
   (* Bump the current level artificially. *)
   send_phrase "let _ = ();;";
   (* Test the [inject_value] function. *)
