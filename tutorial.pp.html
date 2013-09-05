@@ -30,28 +30,28 @@ code > span.er { font-weight: bold; }
 <body>
 <h1 id="presentation">Presentation</h1>
 <p>Pippo takes a document in any format, and executes any code found between</p>
-<pre><code>  {%</code></pre>
+<pre><code>  {％</code></pre>
 <p>and</p>
-<pre><code>  %}</code></pre>
+<pre><code>  ％}</code></pre>
 <p>in an OCaml top-level session. Anything outside of these sections is printed on the standard output transparently.</p>
 <p>There is only one top-level session per file, meaning that the OCaml sections are threaded, as if you were entering the commands in a top-level yourself. In order to be useful, the OCaml code should use <code>print_*</code> statements; the output of these statements will be interleaved with the non-OCaml sections.</p>
 <h1 id="installation">Installation</h1>
 <p>Pippo can be downloaded from <a href="https://github.com/protz/pippo">github</a>. The project contains a sample Makefile that allows you to pre-process a Markdown file, namely the tutorial that you're reading. Because Pippo uses compiler internal modules, it currently only works with OCaml 4.01.0 (in RC at the time of this writing).</p>
 <h1 id="usage">Usage</h1>
-<p>The <code>{%</code> and <code>%}</code> markers must be on a single, non-indented, Unix-style line.</p>
+<p>The <code>{％</code> and <code>％}</code> markers must be on a single, non-indented, Unix-style line.</p>
 <p>For instance, writing:</p>
 <pre><code>  This is some markdown code.
 
-  {%
+  {％
     for i = 1 to 10 do
       Printf.printf &quot;%d&lt;br&gt;&quot; i
     done
-  %}</code></pre>
+  ％}</code></pre>
 <p>In a Markdown document, such as the present one, will result in:</p>
 <div class="sample">
 
 <p>This is some markdown code.</p>
-1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br></p>
 </div>
 
 <h1 id="advanced">Advanced</h1>
@@ -62,9 +62,9 @@ code > span.er { font-weight: bold; }
     (<span class="kw">fun</span> () -&gt;
       print_endline <span class="st">&quot;This is pippo v0.1&quot;</span>);</code></pre>
 <p>meaning that if one writes in a document, such as this one:</p>
-<pre><code>  {%
+<pre><code>  {％
     __version ();
-  %}</code></pre>
+  ％}</code></pre>
 <p>then the result is:</p>
 <div class="sample">
 
@@ -72,9 +72,9 @@ code > span.er { font-weight: bold; }
 </div>
 
 <p>You are encouraged to customize <code>pippo.ml</code> and add your own useful functions. Of course, one can always do:</p>
-<pre><code>  {%
+<pre><code>  {％
     #load &quot;mylib.cma&quot;
-  %}</code></pre>
+  ％}</code></pre>
 <p>but it's more fun playing with the compiler internals.</p>
 </body>
 </html>

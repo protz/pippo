@@ -4,13 +4,13 @@ Presentation
 Pippo takes a document in any format, and executes any code found between
 
 ```
-  {%
+  {％
 ```
 
 and
 
 ```
-  %}
+  ％}
 ```
 
 in an OCaml top-level session. Anything outside of these sections is printed on
@@ -33,18 +33,18 @@ of this writing).
 Usage
 =====
 
-The `{%` and `%}` markers must be on a single, non-indented, Unix-style line.
+The `{％` and `％}` markers must be on a single, non-indented, Unix-style line.
 
 For instance, writing:
 
 ```
   This is some markdown code.
 
-  {%
+  {％
     for i = 1 to 10 do
       Printf.printf "%d<br>" i
     done
-  %}
+  ％}
 ```
 
 In a Markdown document, such as the present one, will result in:
@@ -80,9 +80,9 @@ itself. As an example, `pippo.ml` contains the following code:
 meaning that if one writes in a document, such as this one:
 
 ```
-  {%
+  {％
     __version ();
-  %}
+  ％}
 ```
 
 then the result is:
@@ -99,9 +99,9 @@ You are encouraged to customize `pippo.ml` and add your own useful functions. Of
 course, one can always do:
 
 ```
-  {%
+  {％
     #load "mylib.cma"
-  %}
+  ％}
 ```
 
 but it's more fun playing with the compiler internals.
