@@ -1,20 +1,13 @@
+{%
+  let optok = "{" ^ "%";;
+  let cltok = "%" ^ "}";;
+%}
 Presentation
 ============
 
 Pippo takes a document in any format, and executes any code found between
-
-```
-  {％
-```
-
-and
-
-```
-  ％}
-```
-
-in an OCaml top-level session. Anything outside of these sections is printed on
-the standard output transparently.
+`{%=optok%}` and `{%=cltok%}` in an OCaml top-level session. Anything outside of
+these sections is printed on the standard output transparently.
 
 There is only one top-level session per file, meaning that the OCaml sections
 are threaded, as if you were entering the commands in a top-level yourself. In
@@ -33,18 +26,18 @@ of this writing).
 Usage
 =====
 
-The `{％` and `％}` markers must be on a single, non-indented, Unix-style line.
+The `{%=optok%}` and `{%=cltok%}` markers must be on a single, non-indented, Unix-style line.
 
 For instance, writing:
 
 ```
   This is some markdown code.
 
-  {％
+  {%=optok%}
     for i = 1 to 10 do
       Printf.printf "%d<br>" i
     done
-  ％}
+  {%=cltok%}
 ```
 
 In a Markdown document, such as the present one, will result in:
@@ -80,9 +73,9 @@ itself. As an example, `pippo.ml` contains the following code:
 meaning that if one writes in a document, such as this one:
 
 ```
-  {％
+  {%=optok%}
     __version ();
-  ％}
+  {%=cltok%}
 ```
 
 then the result is:
@@ -99,9 +92,9 @@ You are encouraged to customize `pippo.ml` and add your own useful functions. Of
 course, one can always do:
 
 ```
-  {％
+  {%=optok%}
     #load "mylib.cma"
-  ％}
+  {%=cltok%}
 ```
 
 but it's more fun playing with the compiler internals.

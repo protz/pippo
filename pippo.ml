@@ -116,12 +116,11 @@ let send_phrase_if phrase =
 (** Loop over the lines of a file. Enters OCaml code sections when faced with {%
  * and exits them when faced with %}. *)
 let iter_lines (ic: in_channel): unit =
-  let opening_token = Str.regexp "{%" in
-  let opening_token_equals = Str.regexp "{%=" in
-  let closing_token = Str.regexp "%}" in
+  let tok = Str.regexp "\\({%=\\|{%\\|%}\\)" in
   let state = ref Text in
   let buf = Buffer.create 2048 in
   let process_token token =
+    Printf.eprintf "tok=%s\n" token;
     match token, !state with
     | "{%", Text ->
         state := OCaml
@@ -138,26 +137,18 @@ let iter_lines (ic: in_channel): unit =
   in
   let rec process_line line =
     try
-      let i = Str.search_forward opening_token_equals line 0 in
+      let i = Str.search_forward tok line 0 in
+      let m = Str.matched_string line in
+      let l = String.length m in
       let before = String.sub line 0 i in
-      let after = String.sub line (i + 3) (String.length line - i - 3) in
+      let after = String.sub line (i + l) (String.length line - i - l) in
       process_token before;
-      process_token "{%";
-      process_token "print_string ";
-      process_line after
-    with Not_found -> try
-      let i = Str.search_forward opening_token line 0 in
-      let before = String.sub line 0 i in
-      let after = String.sub line (i + 2) (String.length line - i - 2) in
-      process_token before;
-      process_token "{%";
-      process_line after
-    with Not_found -> try
-      let i = Str.search_forward closing_token line 0 in
-      let before = String.sub line 0 i in
-      let after = String.sub line (i + 2) (String.length line - i - 2) in
-      process_token before;
-      process_token "%}";
+      if m = "{%=" then begin
+        process_token "{%";
+        process_token "print_string ";
+      end else begin
+        process_token m;
+      end;
       process_line after
     with Not_found ->
       process_token (line ^ "\n")
