@@ -120,7 +120,6 @@ let iter_lines (ic: in_channel): unit =
   let state = ref Text in
   let buf = Buffer.create 2048 in
   let process_token token =
-    Printf.eprintf "tok=%s\n" token;
     match token, !state with
     | "{%", Text ->
         state := OCaml
