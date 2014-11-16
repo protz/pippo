@@ -79,7 +79,8 @@ let inject_value (name: string) (typ: string) (value: 'a): unit =
       val_type = Btype.newty2 (Ctype.get_current_level () - 1) (Tvar None);
       (* val_type = Ctype.newvar (); *)
       val_kind = Val_reg;
-      val_loc = Location.none
+      val_loc = Location.none;
+      val_attributes = [];
     }
   in
 

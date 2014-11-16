@@ -5,10 +5,11 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; background-color: #f8f8f8; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
 pre, code { background-color: #f8f8f8; }
@@ -45,11 +46,9 @@ code > span.er { font-weight: bold; }
   %}</code></pre>
 <p>In a Markdown document, such as the present one, will result in:</p>
 <div class="sample">
-
 <p>This is some markdown code.</p>
 <p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br></p>
 </div>
-
 <h1 id="advanced">Advanced</h1>
 <p>The <code>pippo.ml</code> file contains a special <code>inject_value</code> function. It allows you to make any value defined in <code>pippo.ml</code> available <strong>in the OCaml sections</strong>. Just pass it the name of the value, its type, and the OCaml value itself. As an example, <code>pippo.ml</code> contains the following code:</p>
 <pre class="sourceCode ocaml"><code class="sourceCode ocaml">  inject_value
@@ -63,10 +62,8 @@ code > span.er { font-weight: bold; }
   %}</code></pre>
 <p>then the result is:</p>
 <div class="sample">
-
 <p>This is pippo v0.1</p>
 </div>
-
 <p>You are encouraged to customize <code>pippo.ml</code> and add your own useful functions. Of course, one can always do:</p>
 <pre><code>  {%
     #load &quot;mylib.cma&quot;
